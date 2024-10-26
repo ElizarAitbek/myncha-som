@@ -7,6 +7,7 @@ import { useState } from "react";
 
 export default function ExpenseItem({ expenses = [] }) {
   const [showModal, setShowModal] = useState(false);
+  const [currentExpenseId, setCurrentExpenseId] = useState(null);
 
   async function deleteExpense(expenseId) {
     try {
@@ -14,17 +15,18 @@ export default function ExpenseItem({ expenses = [] }) {
         method: "DELETE",
       });
 
-      if (!res.ok) console.error("cant delete expense!");
+      if (!res.ok) alert("cant delete expense! try again.");
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  const handleDeleteExpense = (id) => {
-    deleteExpense(id);
+  const handleDeleteExpense = (expenseId) => {
+    deleteExpense(expenseId);
   };
 
-  const handleOpenEditModal = () => {
+  const handleOpenEditModal = (expenseId) => {
+    setCurrentExpenseId(expenseId);
     setShowModal((prev) => !prev);
   };
   return (
@@ -41,7 +43,10 @@ export default function ExpenseItem({ expenses = [] }) {
               <p>{item.amount}</p>
             </ExpenseDetails>
             <ButtonBlock>
-              <Button variant="regular" onClick={handleOpenEditModal}>
+              <Button
+                variant="regular"
+                onClick={() => handleOpenEditModal(item.id)}
+              >
                 Edit
               </Button>
               <Button
@@ -57,7 +62,13 @@ export default function ExpenseItem({ expenses = [] }) {
         <Lodaing>Loading...</Lodaing>
       )}
 
-      <EditExpenseModal onClose={handleOpenEditModal} isOpen={showModal} />
+      {showModal && (
+        <EditExpenseModal
+          onClose={handleOpenEditModal}
+          isOpen={showModal}
+          currentExpenseId={currentExpenseId}
+        />
+      )}
     </ExpenseWrapper>
   );
 }

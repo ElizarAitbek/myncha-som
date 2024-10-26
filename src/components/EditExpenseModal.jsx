@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "./UI/Modal";
+import { API_KEY } from "../utils/constants";
 
-// TODO: getSingleExpenseByID()
-// TODO: updateExpense()
-
-export default function EditExpenseModal({ isOpen, onClose, expenseId }) {
+export default function EditExpenseModal({
+  isOpen,
+  onClose,
+  currentExpenseId,
+}) {
   const [formData, setFormData] = useState({
     title: "",
     price: "",
@@ -30,8 +32,51 @@ export default function EditExpenseModal({ isOpen, onClose, expenseId }) {
       alert("Заполните все поля");
       return null;
     }
+    updateExpense(formData, currentExpenseId);
     onClose();
   };
+
+  const handleCancelUpdate = () => {
+    onClose();
+  };
+
+  async function updateExpense(updatedExpenseData, expenseId) {
+    try {
+      const res = await fetch(`${API_KEY}/${expenseId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedExpenseData),
+      });
+
+      if (!res.ok) alert("cant update expense! try again.");
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  useEffect(() => {
+    async function getSingleExpenseById(expenseId) {
+      try {
+        const res = await fetch(`${API_KEY}/${expenseId}`);
+        const data = await res.json();
+
+        setFormData({
+          title: data.title,
+          price: data.price,
+          paymentMethod: data.paymentMethod,
+          date: data.date,
+        });
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+
+    if (currentExpenseId) {
+      getSingleExpenseById(currentExpenseId);
+    }
+  }, [currentExpenseId]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -63,7 +108,6 @@ export default function EditExpenseModal({ isOpen, onClose, expenseId }) {
           value={formData.paymentMethod}
           onChange={handleInputChange}
         >
-          <option value="">Select payment option</option>
           <option value="cash">Cash</option>
           <option value="card">Card</option>
         </Select>
@@ -77,7 +121,10 @@ export default function EditExpenseModal({ isOpen, onClose, expenseId }) {
           onChange={handleInputChange}
         />
 
-        <Button type="submit">Submit</Button>
+        <SubmitButton type="submit">Submit</SubmitButton>
+        <CancelButton type="button" onClick={handleCancelUpdate}>
+          Cancel
+        </CancelButton>
       </FormContainer>
     </Modal>
   );
@@ -102,7 +149,7 @@ const Label = styled.label`
   color: #374151;
 `;
 
-const Button = styled.button`
+const SubmitButton = styled.button`
   padding: 10px;
   background-color: #7c3aed;
   color: #fff;
@@ -114,6 +161,20 @@ const Button = styled.button`
 
   &:hover {
     background-color: #6d28d9;
+  }
+`;
+const CancelButton = styled.button`
+  padding: 10px;
+  background-color: #ee2c2c;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #a01e1e;
   }
 `;
 
