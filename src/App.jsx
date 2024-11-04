@@ -1,15 +1,18 @@
 import styled from "styled-components";
 import Header from "./components/Header";
 import ExpenseList from "./components/ExpenseList";
+import { ExpenseProvider } from "./context/ExpenseContext";
 
 export default function App() {
   return (
-    <Main>
-      <Container>
-        <Header />
-        <ExpenseList />
-      </Container>
-    </Main>
+    <ExpenseProvider>
+      <Main>
+        <Container>
+          <Header />
+          <ExpenseList />
+        </Container>
+      </Main>
+    </ExpenseProvider>
   );
 }
 

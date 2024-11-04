@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "./UI/Modal";
 import { API_KEY } from "../utils/constants";
+import { ExpenseContext } from "../context/ExpenseContext";
 
 export default function EditExpenseModal({
   isOpen,
   onClose,
   currentExpenseId,
 }) {
+  const { updateExpense } = useContext(ExpenseContext);
   const [formData, setFormData] = useState({
     title: "",
     price: "",
@@ -39,22 +41,6 @@ export default function EditExpenseModal({
   const handleCancelUpdate = () => {
     onClose();
   };
-
-  async function updateExpense(updatedExpenseData, expenseId) {
-    try {
-      const res = await fetch(`${API_KEY}/${expenseId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedExpenseData),
-      });
-
-      if (!res.ok) alert("cant update expense! try again.");
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
 
   useEffect(() => {
     async function getSingleExpenseById(expenseId) {

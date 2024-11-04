@@ -1,22 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { formatDate } from "../utils/helpers";
 import styled from "styled-components";
 import ExpenseItem from "./ExpenseItem";
-import { API_KEY } from "../utils/constants";
+import { ExpenseContext } from "../context/ExpenseContext";
 
 export default function ExpenseList() {
-  const [expenses, setExpenses] = useState([]);
+  const { getExpenses, expenses } = useContext(ExpenseContext);
 
   useEffect(() => {
-    async function getExpenses() {
-      try {
-        const resp = await fetch(API_KEY);
-        const data = await resp.json();
-        setExpenses(data);
-      } catch (error) {
-        throw new Error(error);
-      }
-    }
     getExpenses();
   }, []);
 
