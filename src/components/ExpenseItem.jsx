@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import Button from "./UI/Button";
 import { formatDate } from "../utils/helpers";
-import { API_KEY } from "../utils/constants";
 import EditExpenseModal from "./EditExpenseModal";
 import { useContext, useState } from "react";
 import { ExpenseContext } from "../context/ExpenseContext";
