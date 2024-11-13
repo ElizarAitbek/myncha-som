@@ -3,23 +3,13 @@ import Button from "./UI/Button";
 import { formatDate } from "../utils/helpers";
 import { API_KEY } from "../utils/constants";
 import EditExpenseModal from "./EditExpenseModal";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { ExpenseContext } from "../context/ExpenseContext";
 
 export default function ExpenseItem({ expenses = [] }) {
   const [showModal, setShowModal] = useState(false);
   const [currentExpenseId, setCurrentExpenseId] = useState(null);
-
-  async function deleteExpense(expenseId) {
-    try {
-      const res = await fetch(`${API_KEY}/${expenseId}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) alert("cant delete expense! try again.");
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
+  const { deleteExpense } = useContext(ExpenseContext);
 
   const handleDeleteExpense = (expenseId) => {
     deleteExpense(expenseId);

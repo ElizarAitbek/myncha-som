@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import Modal from "./UI/Modal";
-import { API_KEY } from "../utils/constants";
+import { ExpenseContext } from "../context/ExpenseContext";
 
 export default function ExpenseForm({ isOpen, onClose }) {
+  const { createExpense } = useContext(ExpenseContext);
   const [formData, setFormData] = useState({
     title: "",
     price: "",
@@ -34,24 +35,6 @@ export default function ExpenseForm({ isOpen, onClose }) {
     createExpense(formData);
     onClose();
   };
-
-  async function createExpense(newExpense) {
-    try {
-      const res = await fetch(API_KEY, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newExpense),
-      });
-
-      if (!res.ok) {
-        console.error("cant post expense");
-      }
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
