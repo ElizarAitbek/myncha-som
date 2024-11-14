@@ -3,12 +3,15 @@ import { formatDate } from "../utils/helpers";
 import styled from "styled-components";
 import ExpenseItem from "./ExpenseItem";
 import { ExpenseContext } from "../context/ExpenseContext";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllExpenses } from "../store/actions/expensesActions";
 
 export default function ExpenseList() {
-  const { getExpenses, expenses } = useContext(ExpenseContext);
+  const { expenses } = useSelector((state) => state.expenses);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getExpenses();
+    dispatch(getAllExpenses());
   }, []);
 
   return (
